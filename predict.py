@@ -73,7 +73,7 @@ class Predictor(BasePredictor):
         stream_long_gen(args.prompt, short_video, n_autoreg_gen, args.negative_prompt, args.seed, args.num_steps, args.image_guidance, name, self.stream_cli, self.stream_model)
         args.negative_prompt_enhancer = args.negative_prompt_enhancer if args.negative_prompt_enhancer is not None else args.negative_prompt
         if enhance:
-            video2video_randomized(args.prompt, opj(result_fol, name+".mp4"), result_fol, cfg_v2v, msxl_model, chunk_size=args.chunk, overlap_size=args.overlap, negative_prompt=args.negative_prompt_enhancer)
+            video2video_randomized(args.prompt, opj(self.result_fol, name+".mp4"), self.result_fol, cfg_v2v, msxl_model, chunk_size=args.chunk, overlap_size=args.overlap, negative_prompt=args.negative_prompt_enhancer)
             return [CogPath('/content/StreamingT2V/results/output.mp4'), CogPath('/content/StreamingT2V/results/output_enhanced.mp4')]
         else:
             return [CogPath('/content/StreamingT2V/results/output.mp4')]
