@@ -1,0 +1,19 @@
+build:
+  gpu: false
+  python_version: "3.10"
+  run:
+    - apt update -y && apt install -y software-properties-common python3-launchpadlib && apt update -y && add-apt-repository -y ppa:git-core/ppa && apt update -y
+    - apt install -y gcc g++ aria2 git git-lfs wget libgl1 libglib2.0-0 ffmpeg cmake libgtk2.0-0 libopenmpi-dev
+    - wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run && sh cuda_12.1.0_530.30.02_linux.run --silent --toolkit
+    - pip install torch==2.1.0+cu121 torchvision==0.16.0+cu121 torchaudio==2.1.0+cu121 torchtext==0.16.0 torchdata==0.7.0 --extra-index-url https://download.pytorch.org/whl/cu121 -U
+    - pip install https://download.pytorch.org/whl/cu121/xformers-0.0.22.post7-cp310-cp310-manylinux2014_x86_64.whl
+    - pip install notebook pyngrok pickleshare ipywidgets imageio-ffmpeg pandas numpy==1.25.2 opencv-python==4.8.0.76 scikit-learn==1.2.2 scipy==1.11.4 matplotlib==3.7.1 diffusers==0.27.2 transformers==4.39.3 fairscale==0.4.13 easydict==1.13 torchsde==0.2.6
+    - pip install modelscope pytorch-lightning==2.0.9 decord==0.6.0 kornia open-clip-torch==2.24.0 jsonargparse==4.20.1 omegaconf==2.3.0 jsonargparse[signatures]>=4.17.0 albumentations==1.3.0 rich accelerate==0.28.0 rotary-embedding-torch==0.5.3
+    - sed -i 's/return caster.operator typename make_caster<T>::template cast_op_type<T>();/return caster;/' /usr/local/lib/python3.10/site-packages/torch/include/pybind11/cast.h
+    - GIT_LFS_SKIP_SMUDGE=1 git clone -b dev https://github.com/camenduru/StreamingT2V /content/StreamingT2V
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/spaces/PAIR/StreamingT2V/resolve/main/t2v_enhanced/checkpoints/streaming_t2v.ckpt -d /content/StreamingT2V/t2v_enhanced/checkpoints -o streaming_t2v.ckpt
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/camenduru/Video-to-Video/raw/main/configuration.json -d /content/Video-to-Video -o configuration.json
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/camenduru/Video-to-Video/resolve/main/non_ema_0035000.pth -d /content/Video-to-Video -o non_ema_0035000.pth
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/camenduru/Video-to-Video/resolve/main/open_clip_pytorch_model.bin -d /content/Video-to-Video -o open_clip_pytorch_model.bin
+    - aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co/camenduru/Video-to-Video/resolve/main/v2-1_512-ema-pruned.ckpt -d /content/Video-to-Video -o v2-1_512-ema-pruned.ckpt
+predict: "/src/predict.py:Predictor"
