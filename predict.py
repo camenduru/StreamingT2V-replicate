@@ -1,18 +1,16 @@
 import os, sys
 from cog import BasePredictor, Input
 from cog import Path as CogPath
-from pathlib import Path
-from typing import List
+
 sys.path.append('/content/StreamingT2V')
 sys.path.append('/content/StreamingT2V/t2v_enhanced')
 sys.path.append('/content/StreamingT2V/t2v_enhanced/thirdparty')
 os.chdir('/content/StreamingT2V')
 
+from typing import List
+from pathlib import Path
 from os.path import join as opj
-import datetime
 import torch
-from PIL.Image import Image
-
 from inference_utils import *
 from model_init import *
 from model_func import *
@@ -62,7 +60,6 @@ class Predictor(BasePredictor):
         args.prompt = prompt
         args.num_frames = num_frames
         args.seed = seed
-        now = datetime.datetime.now()
         name = 'output'
         inference_generator = torch.Generator(device="cuda")
         inference_generator.manual_seed(args.seed)
@@ -76,7 +73,8 @@ class Predictor(BasePredictor):
         stream_long_gen(args.prompt, short_video, n_autoreg_gen, args.negative_prompt, args.seed, args.num_steps, args.image_guidance, name, self.stream_cli, self.stream_model)
         args.negative_prompt_enhancer = args.negative_prompt_enhancer if args.negative_prompt_enhancer is not None else args.negative_prompt
         if enhance:
-            video2video_randomized(args.prompt, opj(self.result_fol, name+".mp4"), self.result_fol, self.cfg_v2v, self.msxl_model, chunk_size=args.chunk, overlap_size=args.overlap, negative_prompt=args.negative_prompt_enhancer)
-            return [CogPath('/content/StreamingT2V/results/output.mp4'), CogPath('/content/StreamingT2V/results/output_enhanced.mp4')]
+            video2video_randomized(args.prompt, opj(result_fol, name+".mp4"), result_fol, cfg_v2v, msxl_model, chunk_size=args.chunk, overlap_size=args.overlap, negative_prompt=args.negative_prompt_enhancer)
+            out = ['/content/StreamingT2V/results/output.mp4', '/content/StreamingT2V/results/output_enhanced.mp4']
         else:
-            return [CogPath('/content/StreamingT2V/results/output.mp4')]
+            out = ['/content/StreamingT2V/results/output.mp4']
+        return out
