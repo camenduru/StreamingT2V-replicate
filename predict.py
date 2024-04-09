@@ -74,7 +74,6 @@ class Predictor(BasePredictor):
         args.negative_prompt_enhancer = args.negative_prompt_enhancer if args.negative_prompt_enhancer is not None else args.negative_prompt
         if enhance:
             video2video_randomized(args.prompt, opj(result_fol, name+".mp4"), result_fol, cfg_v2v, msxl_model, chunk_size=args.chunk, overlap_size=args.overlap, negative_prompt=args.negative_prompt_enhancer)
-            out = ['/content/StreamingT2V/results/output.mp4', '/content/StreamingT2V/results/output_enhanced.mp4']
+            return [CogPath('/content/StreamingT2V/results/output.mp4'), CogPath('/content/StreamingT2V/results/output_enhanced.mp4')]
         else:
-            out = ['/content/StreamingT2V/results/output.mp4']
-        return out
+            return [CogPath('/content/StreamingT2V/results/output.mp4')]
