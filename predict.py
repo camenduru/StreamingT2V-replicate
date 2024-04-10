@@ -40,7 +40,7 @@ class Predictor(BasePredictor):
         self.result_fol = Path("/content/StreamingT2V/results")
         self.device = args.device
         self.ckpt_file_streaming_t2v = Path("/content/StreamingT2V/t2v_enhanced/checkpoints/streaming_t2v.ckpt")
-        self.cfg_v2v = {'downscale': 1, 'upscale_size': (1280, 720), 'model_id': '/content/Video-to-Video', 'pad': True}
+        self.cfg_v2v = {'downscale': 1, 'upscale_size': (1024, 1024), 'model_id': '/content/Video-to-Video', 'pad': True}
         self.stream_cli, self.stream_model = init_streamingt2v_model(self.ckpt_file_streaming_t2v, self.result_fol)
         if args.base_model == "ModelscopeT2V":
             self.model = init_modelscope(self.device)
@@ -53,13 +53,23 @@ class Predictor(BasePredictor):
     def predict(
         self,
         prompt: str = Input(default="A cat running on the street"),
+        negative_prompt: str = Input(default=""),
         num_frames: int = Input(default=24),
         seed: int = Input(default=33),
+        num_steps: int = Input(default=50),
+        image_guidance: int = Input(default=9),
+        chunk: int = Input(default=24),
+        overlap: int = Input(default=8),
         enhance: bool = False,
     ) -> List[CogPath]:
         args.prompt = prompt
+        args.negative_prompt = negative_prompt
         args.num_frames = num_frames
         args.seed = seed
+        args.num_steps = num_steps
+        args.image_guidance = image_guidance
+        args.chunk = chunk
+        args.overlap = overlap
         name = 'output'
         inference_generator = torch.Generator(device="cuda")
         inference_generator.manual_seed(args.seed)
