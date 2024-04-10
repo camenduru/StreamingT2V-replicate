@@ -16,6 +16,7 @@ https://streamingt2v.github.io/
 
 ### 🖼 Output
 
+https://github.com/camenduru/StreamingT2V-replicate/assets/54370274/1156f3a3-fa6c-468f-b123-44910b58dd6a
 
 ### 🏢 Sponsor
 https://replicate.com
